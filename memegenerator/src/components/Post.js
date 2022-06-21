@@ -5,13 +5,38 @@ import {FaHeart, FaComment, FaPaperPlane, FaBookmark, FaEllipsisH} from 'react-i
 import Avatar from 'react-avatar';
 
 function Post() {
-    const [state, sestate] = React.useState()
+    const [state, sestate] = React.useState();
+    const [fetch, setfetch] = React.useState(false);
+
     useEffect(() =>{
+        window.addEventListener('scroll', handleScroll);
         axios.get(`https://meme-api.herokuapp.com/gimme/50`).then(response => {
-            console.log(response.data.memes);
             sestate(response.data.memes);
         })
+        return () => window.removeEventListener('scroll', handleScroll);
     }, [])
+
+    useEffect(() =>{
+        if (fetch){
+            axios.get(`https://meme-api.herokuapp.com/gimme/50`).then(response => {
+                sestate(prevState => [...prevState, ...response.data.memes]);
+            })
+            setTimeout(() =>{
+                setfetch(false);
+            },2000)            
+        }
+
+    }, [fetch])
+
+    
+    function handleScroll() {
+        if (window.innerHeight + document.documentElement.scrollTop +2 >= document.scrollingElement.scrollHeight) {
+            // Do load more content here!
+            setfetch(true)
+            console.log('bottom');
+        }
+      }
+
   return (
     <div className='post'>
         {state && state.map((meme, index) => {
@@ -24,7 +49,7 @@ function Post() {
 function Card(props){
     return(
         <div className='card'>
-            <div className='frow'>
+            <div className='frow trow'>
             <div className='name'><Avatar round size='30' style={{marginRight:'10px'}}/>{props.name}</div>
             <div><FaEllipsisH style={{marginRight:'20px'}}/></div>
             </div>
@@ -41,7 +66,6 @@ function Card(props){
                     <FaBookmark className='icon2' size={40}/>
                 </div>
             </div>
-            <div className='caption'>{props.title}</div>
         </div>
     )
 }

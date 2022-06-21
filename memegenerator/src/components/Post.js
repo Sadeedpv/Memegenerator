@@ -33,7 +33,6 @@ function Post() {
         if (window.innerHeight + document.documentElement.scrollTop +2 >= document.scrollingElement.scrollHeight) {
             // Do load more content here!
             setfetch(true)
-            console.log('bottom');
         }
       }
 

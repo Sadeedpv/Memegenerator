@@ -12,6 +12,8 @@ function Post() {
         window.addEventListener('scroll', handleScroll);
         axios.get(`https://meme-api.herokuapp.com/gimme/50`).then(response => {
             sestate(response.data.memes);
+        }).catch(err => {
+            console.log(err);
         })
         return () => window.removeEventListener('scroll', handleScroll);
     }, [])
